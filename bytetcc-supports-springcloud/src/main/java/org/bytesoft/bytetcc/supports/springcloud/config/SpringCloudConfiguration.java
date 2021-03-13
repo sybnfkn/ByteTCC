@@ -110,14 +110,17 @@ public class SpringCloudConfiguration implements TransactionManagementConfigurer
 		throw new IllegalStateException("CompensableLoadBalancerRuleImpl is disabled!");
 	}
 
+	@Override
 	public void afterSingletonsInstantiated() {
 		this.checkLoadbalancerRuleCorrectly();
 	}
 
+	@Override
 	public void afterPropertiesSet() throws Exception {
 		String host = CommonUtils.getInetAddress();
 		String name = this.environment.getProperty("spring.application.name");
 		String port = this.environment.getProperty("server.port");
+		// 标示服务
 		this.identifier = String.format("%s:%s:%s", host, name, port);
 	}
 
@@ -127,6 +130,7 @@ public class SpringCloudConfiguration implements TransactionManagementConfigurer
 	// <!-- <property name="transactionManager" ref="transactionManager" /> -->
 	// <!-- </bean> -->
 	// <!-- <tx:annotation-driven transaction-manager="jtaTransactionManager" /> -->
+	@Override
 	public PlatformTransactionManager annotationDrivenTransactionManager() {
 		JtaTransactionManager jtaTransactionManager = new JtaTransactionManager();
 		jtaTransactionManager.setTransactionManager(this.applicationContext.getBean(TransactionManagerImpl.class));
@@ -256,10 +260,12 @@ public class SpringCloudConfiguration implements TransactionManagementConfigurer
 		registry.addInterceptor(compensableHandlerInterceptor);
 	}
 
+	@Override
 	public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
 		resolvers.add(new ServiceErrorResolver());
 	}
 
+	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 
 		String[] beanNameArray = beanFactory.getBeanDefinitionNames();
@@ -326,27 +332,27 @@ public class SpringCloudConfiguration implements TransactionManagementConfigurer
 	}
 
 	// public void onApplicationEvent(ApplicationReadyEvent event) {}
-
+	@Override
 	public String getEndpoint() {
 		return this.identifier;
 	}
-
+	@Override
 	public CompensableBeanFactory getBeanFactory() {
 		return this.beanFactory;
 	}
-
+	@Override
 	public void setBeanFactory(CompensableBeanFactory tbf) {
 		this.beanFactory = tbf;
 	}
-
+	@Override
 	public void setEndpoint(String identifier) {
 		this.identifier = identifier;
 	}
-
+	@Override
 	public void setEnvironment(Environment environment) {
 		this.environment = environment;
 	}
-
+	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
 	}
