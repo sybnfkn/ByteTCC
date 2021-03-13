@@ -36,6 +36,9 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 扫描所有springbena是否包含Compensable注解
+ */
 public class CompensableAnnotationValidator implements BeanFactoryPostProcessor {
 	static final Logger logger = LoggerFactory.getLogger(CompensableAnnotationValidator.class);
 
@@ -103,6 +106,7 @@ public class CompensableAnnotationValidator implements BeanFactoryPostProcessor 
 			Class<?> interfaceClass = compensable.interfaceClass();
 			String confirmableKey = compensable.confirmableKey();
 			String cancellableKey = compensable.cancellableKey();
+			// confirm进行校验
 			if (StringUtils.isNotBlank(confirmableKey)) {
 				if (compensables.containsKey(confirmableKey)) {
 					throw new FatalBeanException(
@@ -131,6 +135,7 @@ public class CompensableAnnotationValidator implements BeanFactoryPostProcessor 
 				}
 			}
 
+			// cancelService进行校验
 			if (StringUtils.isNotBlank(cancellableKey)) {
 				if (compensables.containsKey(cancellableKey)) {
 					throw new FatalBeanException(
